@@ -1,19 +1,45 @@
 //
-//  ReminderDetailViewController.swift
+//  ReminderDetailViewDataSource.swift
 //  Today
 //
-//  Created by 안동현 on 2021/11/27.
+//  Created by 안동현 on 2021/12/26.
 //
 
 import UIKit
 
-class ReminderDetailViewController: UITableViewController {
-    /*
+class ReminderDetailViewDataSource: NSObject {
     enum ReminderRow: Int, CaseIterable {
         case title
         case date
         case time
         case notes
+        
+        /*
+         Create a static property that formats a date
+         with the short presentation of the time and no date
+         */
+        
+        static let timeFormatter: DateFormatter = {
+            let formatter = DateFormatter()
+            formatter.dateStyle = .none
+            formatter.timeStyle = .short
+            return formatter
+        } ()
+        
+        /*
+         Create a static property that formats a date
+         with the long presentation of the date and no time information
+         
+         DateFormatter has several predefined formats to use with enumeration values,
+         such as .none, .short, and .long
+         */
+        
+        static let dateFormatter: DateFormatter = {
+            let formatter = DateFormatter()
+            formatter.timeStyle = .none
+            formatter.dateStyle = .long
+            return formatter
+        } ()
         
         
         /* This method returns the appropriate text
@@ -24,9 +50,11 @@ class ReminderDetailViewController: UITableViewController {
             case .title:
                 return reminder?.title
             case .date:
-                return reminder?.dueDate.description
+                guard let date = reminder?.dueDate else { return nil }
+                return Self.dateFormatter.string(from: date)
             case .time:
-                return reminder?.dueDate.description
+                guard let date = reminder?.dueDate else { return nil }
+                return Self.timeFormatter.string(from: date)
             case .notes:
                 return reminder?.notes
             }
@@ -50,48 +78,23 @@ class ReminderDetailViewController: UITableViewController {
         }
         
     }
-    */
     
-    /*
-     When initializing a view controller from a storyboard, iOS calls the init(coder:) initializer. This configure method approach is useful for configuring after initializing, such as injecting dependencies.
-     */
-    private var reminder: Reminder?
-    private var detailViewDataSource: ReminderDetailViewDataSource?
-    
-    func configure(with reminder: Reminder) {
+    private var reminder: Reminder
+    init(reminder: Reminder) {
         self.reminder = reminder
+        super.init()
     }
-    
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        guard let reminder = reminder else {
-            fatalError("No reminder found for detail view")
-        }
-        detailViewDataSource = ReminderDetailViewDataSource(reminder: reminder)
-        tableView.dataSource = detailViewDataSource
-    }
+
 }
 
-//MARK: - for my data source methods at the bottom of the file
-
-
-/*
- 
- tableView(_:numberOfRowsInSection:)
- tableView(_:cellForRowAt:)
- The UITableViewDataSource protocol requires these two methods.
- 
- */
-
-/*
-extension ReminderDetailViewController {
+extension ReminderDetailViewDataSource: UITableViewDataSource {
     /*
      Always codify identifier strings to ensure your app doesn’t crash
      because of a mistyped identifier.
     */
     static let reminderDetailCellIdentifier = "ReminderDetailCell" // constant for the cell identifier
     
-    override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         /*
          A table view asks its data source for the number of rows in a section
          when determining how many cells can be displayed on screen.
@@ -101,7 +104,7 @@ extension ReminderDetailViewController {
          
     }
     
-    override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: Self.reminderDetailCellIdentifier, for: indexPath)
         let row = ReminderRow(rawValue: indexPath.row)
         cell.textLabel?.text = row?.displayText(for: reminder) // Use the ReminderRow instance to update the cell’s label.
@@ -112,4 +115,3 @@ extension ReminderDetailViewController {
         /* Because the enumeration encapsulates the displayText(for:) method and image property, the data source method can focus on cell configuration. */
     }
 }
- */
