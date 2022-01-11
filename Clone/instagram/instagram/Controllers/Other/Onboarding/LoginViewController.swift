@@ -92,6 +92,8 @@ class LoginViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        usernameEmailField.delegate = self
+        passwordField.delegate = self
         addSubViews()
         view.backgroundColor = .systemBackground
     }
@@ -101,12 +103,43 @@ class LoginViewController: UIViewController {
         
         // assign Frames
         
-        headerView.frame = CGRect(x: 0,
-                                  y: 0.0,
-                                  width: view.width,
-                                  height: view.height/3.0)
+        headerView.frame = CGRect(
+            x: 0,
+            y: 0.0,
+            width: view.width,
+            height: view.height/3.0
+        )
+        // super view를 기준으로 해당 뷰의 크기나 위치를 표현하는 것
         
-        
+        usernameEmailField.frame = CGRect(
+            x: 25,
+            y: headerView.bottom + 10,
+            width: view.width - 50,
+            height: 52.0
+        )
+
+        passwordField.frame = CGRect(
+            x: 25,
+            y: usernameEmailField.bottom + 10,
+            width: view.width - 50,
+            height: 52.0
+        )
+
+
+        loginButton.frame = CGRect(
+            x: 25,
+            y: passwordField.bottom + 10,
+            width: view.width - 50,
+            height: 52.0
+        )
+
+        createAccountButton.frame = CGRect(
+            x: 25,
+            y: loginButton.bottom + 10,
+            width: view.width - 50,
+            height: 52.0
+        )
+
         configureHeaderView()
     }
      
@@ -122,6 +155,13 @@ class LoginViewController: UIViewController {
         backgroundView.frame = headerView.bounds
         
         // Add instagram logo
+        let imageView = UIImageView(image: UIImage(named: "text"))
+        headerView.addSubview(imageView)
+        imageView.contentMode = .scaleAspectFit
+        imageView.frame = CGRect(x: headerView.width/4.0,
+                                 y: view.safeAreaInsets.top,
+                                 width: headerView.width/2.0,
+                                 height: headerView.height - view.safeAreaInsets.top)
     }
     
     private func addSubViews() {
